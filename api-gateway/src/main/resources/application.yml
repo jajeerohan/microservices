@@ -1,0 +1,51 @@
+server:
+  port: 9095
+
+spring:
+  application:
+    name: "api-gateway"
+  cloud:
+    gateway:
+      routes:
+        - id: food-service
+          uri: lb://food-service
+          predicates:
+            - Path=/foods/**
+          filters:
+            - RewritePath=/foods/?(?<segment>.*), /$\{segment}
+
+        - id: restaurant-service
+          uri: lb://restaurant-service
+          predicates:
+            - Path=/restaurants/**
+          filters:
+            - RewritePath=/restaurants/(?<segment>.*), /$\{segment}
+
+#Here RewritePath is important because of below. It replaces /restaurants/api/v1/restaurants with /api/v1/restaurants as our microservice only handles /api/v1/restaurants
+#Client: /restaurants/api/v1/restaurants
+#Gateway: /restaurants/api/v1/restaurants → MATCH
+#Filter: /api/v1/restaurants → FORWARD
+#Service: receives /api/v1/restaurants
+
+      discovery:
+        locator:
+          enabled: false #discovery.locator.gateway=true is for automatic route creation for all the services registered on service registry
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      access: read_only
+
+eureka:
+  client:
+    register-with-eureka: true  # Should this service register itself? (Yes)
+    fetch-registry: true       # Should this service fetch the registry? (Yes)
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.cloud.client.ip-address}:${server.port}

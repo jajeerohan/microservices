@@ -1,0 +1,8 @@
+server:
+  port: 1001
+
+info:
+  app:
+    name: "Food Service"
+    description: "This is Food Service. Ready to serve users. This is from config server"
+    version: "1.0 Production"

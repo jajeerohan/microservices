@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: config-server
+# Below properties are used to fetch the properties from git
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/jajeerohan/config-server.git
+          default-label: main #branch name
+          timeout: 5
+          clone-on-start: true #when the application starts clone this repo make it available in the local
+          force-pull: true #if any changes are performed on the git, pull the latest without needing to restart the config server
+# Below commented code is used to fetch the properties from classpath
+#  profiles:
+#    active: native
+#  cloud:
+#    config:
+#      server:
+#        native:
+#          search-locations: "classpath:/config"
+
+eureka:
+  client:
+    register-with-eureka: true  # Should this service register itself? (Yes)
+    fetch-registry: true       # Should this service fetch the registry? (Yes)
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.cloud.client.ip-address}:${server.port}
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+server:
+  port: 9096
+
+# encrypt.key enables 2 endpoints /encrypt and /decrypt.
+# these endpoints can be used to encrypt or decrypt keys/passwords using below key
+# mention "{cipher}encrypted_value_here"
+encrypt:
+  key: bgbywiahd7249yrgbakwjbfvfq
