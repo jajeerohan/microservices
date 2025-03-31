@@ -3,23 +3,29 @@ server:
 
 spring:
   application:
-    name: "api-gateway"
-  cloud:
-    gateway:
-      routes:
-        - id: food-service
-          uri: lb://food-service
-          predicates:
-            - Path=/foods/**
-          filters:
-            - RewritePath=/foods/?(?<segment>.*), /$\{segment}
+    name: api-gateway
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: food-service
+#          uri: lb://food-service  # Load-balanced request to food-service
+#          predicates:
+#            - Path=/foods/**
+#          filters:
+#            - RewritePath=/foods/?(?<segment>.*), /${segment}
+#            - name: CircuitBreaker
+#              args:
+#                name: foodServiceCircuitBreaker
+#                statusCodes: 500, 502, 503, 504
+#                fallbackUri: forward:/circuitBreaker/fallback  # Redirects to fallback endpoint if food-service is down
 
-        - id: restaurant-service
-          uri: lb://restaurant-service
-          predicates:
-            - Path=/restaurants/**
-          filters:
-            - RewritePath=/restaurants/(?<segment>.*), /$\{segment}
+
+#        - id: restaurant-service
+#          uri: lb://restaurant-service
+#          predicates:
+#            - Path=/restaurants/**
+#          filters:
+#            - RewritePath=/restaurants/(?<segment>.*), /$\{segment}
 
 #Here RewritePath is important because of below. It replaces /restaurants/api/v1/restaurants with /api/v1/restaurants as our microservice only handles /api/v1/restaurants
 #Client: /restaurants/api/v1/restaurants
@@ -27,9 +33,9 @@ spring:
 #Filter: /api/v1/restaurants → FORWARD
 #Service: receives /api/v1/restaurants
 
-      discovery:
-        locator:
-          enabled: false #discovery.locator.gateway=true is for automatic route creation for all the services registered on service registry
+#      discovery:
+#        locator:
+#          enabled: false #discovery.locator.gateway=true is for automatic route creation for all the services registered on service registry
 
 management:
   endpoints:
@@ -46,6 +52,24 @@ eureka:
     fetch-registry: true       # Should this service fetch the registry? (Yes)
     service-url:
       defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    preferIpAddress: true
+#    instanceId: ${spring.cloud.client.ip-address}:${server.port}
   instance:
-    preferIpAddress: true
-    instanceId: ${spring.cloud.client.ip-address}:${server.port}
+    hostname: localhost
+
+
+# circuit breaker configurations
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10      # Number of requests to track failure rate
+#        minimum-number-of-calls: 5   # Minimum calls before activating circuit breaker
+        failure-rate-threshold: 50   # Trip circuit if failure rate exceeds 50%
+#        slow-call-rate-threshold: 50 # Trip if 50% of calls are slow
+#        slow-call-duration-threshold: 2000ms # Calls exceeding 2s are considered slow
+        wait-duration-in-open-state: 10000ms  # Wait 20s before trying requests again
+        permitted-number-of-calls-in-half-open-state: 2 # Test calls in HALF-OPEN state
+#        automatic-transition-from-open-to-half-open-enabled: true
+#        event-consumer-buffer-size: 10

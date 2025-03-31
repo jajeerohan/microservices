@@ -28,9 +28,13 @@ eureka:
     fetch-registry: true       # Should this service fetch the registry? (Yes)
     service-url:
       defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    preferIpAddress: true
+#    instanceId: ${spring.cloud.client.ip-address}:${server.port}
   instance:
-    preferIpAddress: true
-    instanceId: ${spring.cloud.client.ip-address}:${server.port}
+    hostname: localhost
+    prefer-ip-address: false     # Ensures hostname is used instead of IP
+#    instance-id: ${spring.application.name}:${server.port}
 
 
 management:

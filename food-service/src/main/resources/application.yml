@@ -1,6 +1,6 @@
 spring:
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
   application:
     name: "food-service"
 #  datasource:
@@ -21,19 +21,27 @@ spring:
     port: 5672
     username: guest
     password: guest
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 
 server:
   port: 9092
 
-#eureka:
-#  client:
-#    register-with-eureka: true  # Should this service register itself? (Yes)
-#    fetch-registry: true       # Should this service fetch the registry? (Yes)
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka/
+eureka:
+  client:
+    register-with-eureka: true  # Should this service register itself? (Yes)
+    fetch-registry: true       # Should this service fetch the registry? (Yes)
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
 #  instance:
 #    preferIpAddress: true
 #    instanceId: ${spring.cloud.client.ip-address}:${server.port}
+  instance:
+    hostname: localhost
+    prefer-ip-address: false     # Ensures hostname is used instead of IP
+#    instance-id: ${spring.application.name}:${server.port}
 
 #management:
 #  endpoints:
@@ -43,6 +51,15 @@ server:
 #  info:
 #    env:
 #      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        permitted-number-of-calls-in-half-open-state: 2
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10000
 
 
 

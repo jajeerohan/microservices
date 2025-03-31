@@ -52,10 +52,10 @@ public class FoodItemService {
 //        RestaurantDto restaurantDto = restTemplate.getForObject(restaurantServiceUrl, RestaurantDto.class);
 
         //FeignClient
-//        RestaurantDto restaurantDto = restaurantService.getRestaurantDto(foodItem.getRestaurantId());
+        RestaurantDto restaurantDto = restaurantService.getRestaurantDto(foodItem.getRestaurantId());
 
         //WebClient
-        RestaurantDto restaurantDto = restaurantWebClientService.getRestaurantById(foodItem.getRestaurantId());
+//        RestaurantDto restaurantDto = restaurantWebClientService.getRestaurantById(foodItem.getRestaurantId());
 
         FoodItemDTO foodItemDTO = convertToDTO(foodItem);
         foodItemDTO.setRestaurant(restaurantDto);
