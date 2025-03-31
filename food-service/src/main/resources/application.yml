@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod
+    active: dev
   application:
     name: "food-service"
 #  datasource:
@@ -15,6 +15,12 @@ spring:
 #    show-sql: true
   config:
     import: "configserver:http://localhost:9096/"
+#spring-cloud-bus with amqp property - rabbitmq default username, password and port
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
 server:
   port: 9092
@@ -37,6 +43,8 @@ server:
 #  info:
 #    env:
 #      enabled: true
+
+
 
 
 
