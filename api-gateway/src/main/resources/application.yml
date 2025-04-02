@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: api-gateway
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: 1000 # how much time microservices should take to connect to each other
+        response-timeout: 10s # In how many seconds response should be received. Applied at global level on API GATEWAY
 #  cloud:
 #    gateway:
 #      routes:
@@ -73,3 +78,4 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 2 # Test calls in HALF-OPEN state
 #        automatic-transition-from-open-to-half-open-enabled: true
 #        event-consumer-buffer-size: 10
+

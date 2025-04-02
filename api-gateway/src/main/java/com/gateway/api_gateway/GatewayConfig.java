@@ -32,9 +32,18 @@ public class GatewayConfig {
                         route -> route.path("/restaurants/**")
                                 .filters(f ->
 
-                                        f.rewritePath("/restaurants/?(?<remaining>.*)", "/${remaining}").
-                                                addRequestHeader("ExtraValue", "Samosa")
+                                        f.rewritePath("/restaurants/?(?<remaining>.*)", "/${remaining}")
+                                                        .addRequestHeader("ExtraValue", "Samosa")
+                                                .retry(retryConfig -> retryConfig.setRetries(3)
+                                                        .setMethods(HttpMethod.GET)
+                                                        .setBackoff(Duration.ofMillis(1000),
+                                                                    Duration.ofMillis(8000),
+                                                                   2,
+                                                                 true
+                                                        )
+                                                )
                                 )
+
                                 .uri("lb://restaurant-service")
 
 
