@@ -45,6 +45,12 @@ spring:
     redis:
       host: localhost
       port: 6379
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/substring/protocol/openid-connect/certs #this is used to decode the jwt token
+          issuer-uri: http://localhost:8080/realms/substring
 management:
   endpoints:
     web:
@@ -81,6 +87,8 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 2 # Test calls in HALF-OPEN state
 #        automatic-transition-from-open-to-half-open-enabled: true
 #        event-consumer-buffer-size: 10
+
+
 
 
 
