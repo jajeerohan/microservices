@@ -7,7 +7,7 @@ spring:
   cloud:
     gateway:
       httpclient:
-        connect-timeout: 1000 # how much time microservices should take to connect to each other
+        connect-timeout: 2000 # how much time microservices should take to connect to each other
         response-timeout: 10s # In how many seconds response should be received. Applied at global level on API GATEWAY
 #  cloud:
 #    gateway:
@@ -41,7 +41,10 @@ spring:
 #      discovery:
 #        locator:
 #          enabled: false #discovery.locator.gateway=true is for automatic route creation for all the services registered on service registry
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
 management:
   endpoints:
     web:
@@ -78,4 +81,6 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 2 # Test calls in HALF-OPEN state
 #        automatic-transition-from-open-to-half-open-enabled: true
 #        event-consumer-buffer-size: 10
+
+
 

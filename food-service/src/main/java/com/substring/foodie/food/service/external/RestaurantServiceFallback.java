@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class RestaurantServiceFallback implements RestaurantService {
+public class RestaurantServiceFallback implements RestaurantServiceFeign {
 
     @Override
     public RestaurantDto getRestaurantDto(String id) {

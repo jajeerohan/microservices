@@ -8,19 +8,22 @@ import com.substring.foodie.food.entities.FoodCategory;
 import com.substring.foodie.food.entities.FoodItem;
 import com.substring.foodie.food.repository.FoodCategoryRepo;
 import com.substring.foodie.food.repository.FoodItemRepo;
-import com.substring.foodie.food.service.external.RestaurantService;
+import com.substring.foodie.food.service.external.RestaurantServiceFeign;
 import com.substring.foodie.food.service.external.RestaurantWebClientService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FoodItemService {
+
+    private int attemptCounter = 0;
 
     @Autowired
     private FoodItemRepo foodItemRepository;
@@ -32,7 +35,7 @@ public class FoodItemService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private RestaurantService restaurantService; //feign-client
+    private RestaurantServiceFeign restaurantServiceFeign; //feign-client
 
     @Autowired
     private RestaurantWebClientService restaurantWebClientService;
@@ -51,8 +54,9 @@ public class FoodItemService {
 //        String restaurantServiceUrl = "http://restaurant-service/api/v1/restaurants/" + foodItem.getRestaurantId();
 //        RestaurantDto restaurantDto = restTemplate.getForObject(restaurantServiceUrl, RestaurantDto.class);
 
+
         //FeignClient
-        RestaurantDto restaurantDto = restaurantService.getRestaurantDto(foodItem.getRestaurantId());
+        RestaurantDto restaurantDto = restaurantServiceFeign.getRestaurantDto(foodItem.getRestaurantId());
 
         //WebClient
 //        RestaurantDto restaurantDto = restaurantWebClientService.getRestaurantById(foodItem.getRestaurantId());

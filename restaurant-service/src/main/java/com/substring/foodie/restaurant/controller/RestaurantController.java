@@ -2,6 +2,7 @@ package com.substring.foodie.restaurant.controller;
 
 import com.substring.foodie.restaurant.service.RestaurantService;
 import com.substring.foodie.restaurant.dto.RestaurantDto;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +32,9 @@ public class RestaurantController {
     }
 
     // Get restaurant by ID
-    int counter=0;
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantDto> getById(@PathVariable String id) {
         RestaurantDto dto = restaurantService.getById(id);
-        /*if (counter < 3) {
-            System.out.println("Retried " + counter);
-            throw new RuntimeException("Retried getById on RestaurantController");
-        }
-        counter++;*/
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
@@ -51,6 +46,7 @@ public class RestaurantController {
     }
 
     // Delete restaurant by ID
+    @RateLimiter(name = "get-all-restaurant-rate-limiter", fallbackMethod = "getAllFallBack")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         restaurantService.delete(id);
@@ -62,5 +58,11 @@ public class RestaurantController {
     public ResponseEntity<List<RestaurantDto>> getAll() {
         List<RestaurantDto> restaurants = restaurantService.getAll();
         return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    }
+
+
+    public ResponseEntity<List<RestaurantDto>> getAllFallBack(Throwable throwable) {
+        System.out.println(throwable.getMessage());
+        return ResponseEntity.ok().body(null);
     }
 }

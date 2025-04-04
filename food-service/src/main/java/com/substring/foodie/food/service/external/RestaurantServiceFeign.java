@@ -9,7 +9,7 @@ import java.util.List;
 
 //@FeignClient(name = "restaurant-service", url = "http://restaurant-service")
 @FeignClient(name = AppConstants.RESTAURANT_SERVICE_NAME, fallback = RestaurantServiceFallback.class)
-public interface RestaurantService {
+public interface RestaurantServiceFeign {
 
     @GetMapping("/api/v1/restaurants/{id}")
     RestaurantDto getRestaurantDto(@PathVariable("id") String id);
